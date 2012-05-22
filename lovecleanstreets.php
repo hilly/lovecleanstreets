@@ -2,6 +2,8 @@
 /**
  * lovecleanstreets.php
  * dependencies - API key for love clean streets; leaflet mapping; 
+ * approved feeds should be visible (on the test server) at: http://apitest.mediaklik.com/reports/georss?age=40&authorityid=242&approvedonly=false
+ * unapproved feeds should be visible (on the test server) at: http://apitest.mediaklik.com/reports/?approvedonly=false&age=40&authorityid=242
  * @package default
  */
 $api_key = $_GET['api'];
@@ -299,7 +301,8 @@ print "<br>\n";
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	$output = curl_exec($ch);
 	curl_close($ch);
-	echo 'http://apitest.mediaklik.com/reports/report/'.$output.'?APPKEY='.$api_key;
+	print 'Test at: <a href="http://apitest.mediaklik.com/reports/report/'.$output.'?APPKEY='.$api_key.'">apittest.mediaklik.com xml</a><br>\n';
+	print 'Approved reports should be visible at: <a href="http://apitest.mediaklik.com/reports/georss?age=40&authorityid=242">apittest.mediaklik.com georss</a>';
 }
 
 ?>
