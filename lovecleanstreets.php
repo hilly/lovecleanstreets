@@ -74,6 +74,7 @@ function showHeader($title) {
 		  <!-- More ideas for your <head> here: h5bp.com/d/head-Tips -->
 
 		</head>
+		<body>
 		<div id="main">
 <?php
 }
@@ -86,6 +87,8 @@ function showFooter() {
 ?>
 		<!-- closes div#main -->
 		</div>
+		</body>
+		</html>
 <?php
 }
 
@@ -298,6 +301,7 @@ function showForm() {
 			    </div>
 			    <div>
 			      <img id="loading" style="display: none" alt="" src="/Content/Lightbox/images/lightbox-ico-loading.gif">
+			    <!-- closes div map-->
 			    </div>
 			  </fieldset>
 			</form>
