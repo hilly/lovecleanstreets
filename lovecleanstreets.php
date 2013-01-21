@@ -47,7 +47,7 @@ function showHeader($title) {
 		<head>
 		  <meta charset="utf-8">
 			<style type="text/css" media="screen">
-			div#main{
+			#main{
 				width:272px;;
 			}
 			</style>
@@ -391,10 +391,10 @@ function handleForm() {
 	curl_setopt($ch, CURLOPT_POSTFIELDS, "$xml_data");
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	$output = curl_exec($ch);
-	echo $output;
+    $output=str_replace('false','',$output);
 	curl_close($ch);
-	echo "<p>Test here: http://apitest.mediaklik.com/reports/report/$output?APPKEY=$api_key</p>";
-	print('<p>Approved reports should be visible at: <a href="http://apitest.mediaklik.com/reports/?approvedonly=false&age=40&authorityid=242">http://apitest.mediaklik.com/reports/?approvedonly=false&age=40&authorityid=242</a></p>');
+	echo "<p>Test here: <a href='http://apitest.mediaklik.com/reports/report/$output?APPKEY=$api_key'>http://apitest.mediaklik.com/reports/report/$output?APPKEY=$api_key</a></p>";
+	print('<p>Approved reports around Shooters Hill should be visible at: <a href="http://apitest.mediaklik.com/reports/?approvedonly=false&age=40&authorityid=242">http://apitest.mediaklik.com/reports/?approvedonly=false&age=40&authorityid=242</a></p>');
 }
 
 
