@@ -23,8 +23,8 @@ $api_key = $_GET['api'];
 showHeader($title);
 
 if (isset($api_key) && $api_key != '') {
-	if (sizeof($_FILES)===0) {
-		showForm();
+    if (sizeof($_FILES)===0) {
+    	showForm();
 	}
 	else {
 		handleForm();
@@ -45,7 +45,9 @@ function showHeader($title) {
 ?>
 	<!DOCTYPE html>
 		<head>
-		  <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+		    <meta charset="utf-8">
+          
 			<style type="text/css" media="screen">
 			#main{
 				width:272px;;
@@ -57,7 +59,7 @@ function showHeader($title) {
 		<![endif]-->
 		<!-- loads CloudMade leaflet -->
 		<script src="leaflet/dist/leaflet.js"></script>
-
+    	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 
 		  <!-- Use the .htaccess and remove these lines to avoid edge case issues.
 		       More info: h5bp.com/i/378 -->
@@ -65,9 +67,6 @@ function showHeader($title) {
 
 		  <title><?php echo $title; ?></title>
 		  <meta name="description" content="">
-
-		  <!-- Mobile viewport optimized: h5bp.com/viewport -->
-		  <meta name="viewport" content="width=device-width">
 
 		  <!-- <link rel="stylesheet" href="css/style.css"> -->
 
@@ -253,7 +252,10 @@ function showForm() {
 			            <br>
 						<label>Select a location by moving the pin:</label>
 						<div id="map" style="height: 200px"></div>
-						<script type="text/javascript" charset="utf-8">
+                        <span id="Lat">lat: ...</span>°,
+                        <span id="Long">long: ...</span>
+               
+                        <script type="text/javascript" charset="utf-8">
 						// initialize the map on the "map" div with a given center and zoom
 						var map = new L.Map('map', {
 						    center: new L.LatLng(51.46898018751684, 0.06827831268310547),
@@ -265,30 +267,53 @@ function showForm() {
 						    maxZoom: 18
 						});
 
-						var markerLocation = new L.LatLng(51.46898018751684, 0.06827831268310547);
-						var marker = new L.Marker(markerLocation,{draggable: true});
-						map.addLayer(marker);
+                        // geo-location 
+                        // var Geo={lat:51.46898018751684, lng:0.06827831268310547};
+                        var Geo ={};
+                        
+                        if (navigator.geolocation) {
+                           navigator.geolocation.getCurrentPosition(success, error);
+                        }
+                        
+                
+                        //Get the latitude and the longitude;
+                        function success(position) {
+                            Geo.lat = position.coords.latitude;
+                            Geo.lng = position.coords.longitude;
+                            setLocation(Geo);
+                        }
+                
+                        function error(){
+                            console.log("Geocoder failed");
+                            var Geo={lat:51.46898018751684, lng:0.06827831268310547};
+                            setLocation(Geo);
+                        }
+                        
+                        function setLocation(Geo){
+                            var markerLocation = new L.LatLng(Geo.lat, Geo.lng);
+            				var marker = new L.Marker(markerLocation,{draggable: true});
+    						map.addLayer(marker);
+        					var popupContent = '(' + marker.getLatLng().lat.toFixed(3) + ', ' + marker.getLatLng().lng.toFixed(3) + ')';
+    						marker.bindPopup(popupContent).openPopup();
+    						marker.on('dragend', onMarkerClick);
+    
+    						function onMarkerClick(e) {
+    							lat = marker.getLatLng().lat;
+    							lng = marker.getLatLng().lng;
+    							popupContent = '(' + lat.toFixed(3) + ', ' + lng.toFixed(3) + ')';
+    							marker.bindPopup(popupContent).openPopup();
+    							document.getElementById('latitude').textContent=lat.toFixed(3);
+    							document.getElementById('ReportLatitude').value=lat;
+    							document.getElementById('longitude').textContent=lng.toFixed(3);
+    							document.getElementById('ReportLongitude').value=lng;
+    						}    
+    
+    						// add the CloudMade layer to the map
+    						map.addLayer(cloudmade);
+                        }
 
-						var popupContent = '(' + marker.getLatLng().lat.toFixed(3) + ', ' + marker.getLatLng().lng.toFixed(3) + ')';
-						marker.bindPopup(popupContent).openPopup();
-						marker.on('dragend', onMarkerClick);
 
-						function onMarkerClick(e) {
-							lat = marker.getLatLng().lat;
-							lng = marker.getLatLng().lng;
-							popupContent = '(' + lat.toFixed(3) + ', ' + lng.toFixed(3) + ')';
-							marker.bindPopup(popupContent).openPopup();
-							document.getElementById('latitude').textContent=lat.toFixed(3);
-							document.getElementById('ReportLatitude').value=lat;
-							document.getElementById('longitude').textContent=lng.toFixed(3);
-							document.getElementById('ReportLongitude').value=lng;
-						}
-
-
-						// add the CloudMade layer to the map
-						map.addLayer(cloudmade);
-
-						</script>
+					</script>
 			     <input id="ResponseRequired" name="ResponseRequired" type="hidden" value="True">
 			    <input id="ReportLatitude" name="ReportLatitude" type="hidden" value="0">
 			    <input id="ReportLongitude" name="ReportLongitude" type="hidden" value="0">
@@ -300,7 +325,7 @@ function showForm() {
 			                    Uploading your report...</div>
 			    </div>
 			    <div>
-			      <img id="loading" style="display: none" alt="" src="/Content/Lightbox/images/lightbox-ico-loading.gif">
+			      <img id="loading" style="display: none" alt="" src="/assets/images/lightbox-ico-loading.gif">
 			    <!-- closes div map-->
 			    </div>
 			  </fieldset>
@@ -314,7 +339,7 @@ function showForm() {
  * TODO	- validate form, noting missing Category,  for example
  */
 function handleForm() {
-	$DateTimeRecorded=date("c", time()-(1*24*3600));
+	$DateTimeRecorded=date("c", time());//-(1*24*3600));
 
 	if (isset($_REQUEST['CategoryList'])) {
 		$CategoryId = $_REQUEST['CategoryList'];
@@ -393,7 +418,7 @@ function handleForm() {
 	$output = curl_exec($ch);
     $output=str_replace('false','',$output);
 	curl_close($ch);
-	echo "<p>Test here: <a href='http://apitest.mediaklik.com/reports/report/$output?APPKEY=$api_key'>http://apitest.mediaklik.com/reports/report/$output?APPKEY=$api_key</a></p>";
+	echo "<p>Test here: <a href='http://apitest.mediaklik.com/reports/report/ " .$output . "?APPKEY=$api_key'>http://apitest.mediaklik.com/reports/report/$output?APPKEY=$api_key</a></p>";
 	print('<p>Approved reports around Shooters Hill should be visible at: <a href="http://apitest.mediaklik.com/reports/?approvedonly=false&age=40&authorityid=242">http://apitest.mediaklik.com/reports/?approvedonly=false&age=40&authorityid=242</a></p>');
 }
 
