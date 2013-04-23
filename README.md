@@ -11,6 +11,7 @@ dependencies
  
 testing
 -------
-Approved feeds should be visible (on the test server) at: http://apitest.mediaklik.com/reports/georss?age=40&authorityid=242&approvedonly=true
-Anapproved feeds should be visible (on the test server) at: http://apitest.mediaklik.com/reports/?approvedonly=false&age=40&authorityid=242
+approved feeds should be visible (on the test server) at: http://apitest.mediaklik.com/reports/georss?age=40&authorityid=242&approvedonly=true
+
+unapproved feeds should be visible (on the test server) at: http://apitest.mediaklik.com/reports/?approvedonly=false&age=40&authorityid=242
 ****
